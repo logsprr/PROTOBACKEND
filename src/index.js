@@ -1,6 +1,7 @@
 require('dotenv').config()
 const express = require("express");
 const bodyParser = require("body-parser");
+const cors = require('cors');
 const app = express();
 const routes = require('./routes/routes');
 const firebase = require('firebase');
@@ -14,6 +15,7 @@ const config = {
     appId: "1:204666161034:web:d103f48b20c339b4da6a73"
 };
 firebase.initializeApp(config);
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(routes);
