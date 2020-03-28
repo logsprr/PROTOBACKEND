@@ -4,15 +4,14 @@ const transporter = nodemailer.createTransport({
     port: 587,
     secure: false,
     auth: {
-        user: "corinthiaswwyy@gmail.com",
-        pass: "2502199926091999badia"
-    },
-    tls: { rejectUnauthorized: false }
+        user: "wakanoreply@gmail.com",
+        pass: "10313264"
+    }
 });
 
-module.exports.resetPassword = async function (email, nome, senha, language = 'sp') {
+module.exports.resetPassword = async function (email, nome, language = 'sp') {
     const mailOptions = {
-        from: 'corinthiaswwyy@gmail.com"',
+        from: 'wakanoreply@gmail.com',
         to: email,
         subject: 'Recuperação de Waka Crm',
         html: `
@@ -21,13 +20,11 @@ module.exports.resetPassword = async function (email, nome, senha, language = 's
         <hr style="color:#FFDD00; border-color:#FFDD00; background-color:#FFDD00;"/>
         <br />
         <h2>Prezado Sr.(a) `+ nome + `</h2>
-        <h4>Use essa senha abaixo para acessar o app Waka Crm!</h4>
-        <h4>Senha provisória: <strong style="color:#FFDD00">`+ senha + `</strong></h4>
+        <h4>Estamos avisando que sua senha foi redefinida</h4>
         <br />
-        <h4>Não esqueça de altera-la assim que possivel.</h4>
+        <h4>Não esqueça que dentro de 24 horas , não poderá mudar a senha.</h4>
         <br />
-        <h4>Muito obrigado,</h4>
-        
+        <h4>Muito obrigado</h4>
         <h3>Equipe <strong style="color:#FFDD00">Waka Crm!</strong></h3>
         </div>
         `

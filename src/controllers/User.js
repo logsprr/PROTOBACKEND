@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const jwt = require('../services/tokens');
 const firebase = require('firebase');
 const recovery = require('../services/nodemailer');
+const nexmo = require('../services/nexmo');
 module.exports = {
     async createUser(req, res) {
         if (req.body != null) {
@@ -66,14 +67,28 @@ module.exports = {
             return res.status(400).send({ error: 'Falha no delete por falta de token', status: false })
         }
     },
+    async sendCode(req, res) {
+        const { email } = req.body;
+        const code = Math.floor(100000 + Math.random() * 900000);
+        const userResponse = await User.findOneAndUpdate(email, { code: code });
+        const from = 'Waka Crm';
+        const text = `Seu código de senha ${code}!`;
+        nexmo.message.sendSms(from, userResponse.phone, text);
+        return res.status(200).send({ message: 'Enviado com sucesso', status: true, email: userResponse.email })
+    },
     async resetPassword(req, res) {
-        const pts = crypto.randomBytes(5).toString('hex');
-        const newpassword = process.env.NODEBCRYPT + pts;
+        const { email, password, code } = req.body;
+        const newpassword = process.env.NODEBCRYPT + password;
         const hashpassword = await bcryptjs.hash(newpassword, 10);
-        const userResponse = await User.findOneAndUpdate(req.body.email, { password: hashpassword });
-        if (userResponse != null) {
-            await recovery.resetPassword(req.body.email, userResponse.name, pts);
-            return res.status(200).send({ data: userResponse, message: 'Atualizado  com sucesso', status: true })
+        const userResponseCode = await User.findOne({ email });
+        if (userResponseCode.code == code) {
+            const userResponse = await User.findOneAndUpdate(email, { password: hashpassword });
+            if (userResponse != null) {
+                await recovery.resetPassword(email, userResponse.name);
+                return res.status(200).send({ data: userResponse, message: 'Atualizado  com sucesso', status: true })
+            } else {
+                return res.status(400).send({ error: 'Falha na atualização por falta de token', status: false })
+            }
         } else {
             return res.status(400).send({ error: 'Falha na atualização por falta de token', status: false })
         }
