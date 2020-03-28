@@ -3,6 +3,7 @@ const { format } = require('util');
 module.exports = uploadImageToStorage = (req, res, next) => {
     let file = req.file;
     let type = req.text;
+    console.log(req.file)
     return new Promise((resolve, reject) => {
         if (!file) {
             res.status(400).send('O arquivo nao foi para a nuvem.');
@@ -13,7 +14,7 @@ module.exports = uploadImageToStorage = (req, res, next) => {
 
         const blobStream = fileUpload.createWriteStream({
             gzip: true,
-            resumable: true,
+            resumable: false,
             metadata: {
                 contentType: req.file.mimetype
             }
