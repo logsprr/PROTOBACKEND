@@ -1,7 +1,9 @@
 const User = require('../models/User');
 const bcryptjs = require('bcryptjs');
+const crypto = require('crypto');
 const jwt = require('../services/tokens');
 const firebase = require('firebase');
+const recovery = require('../services/nodemailer');
 module.exports = {
     async createUser(req, res) {
         if (req.body != null) {
@@ -62,6 +64,18 @@ module.exports = {
             return res.status(200).send({ data: userResponse, message: 'Deletado com sucesso', status: true })
         } else {
             return res.status(400).send({ error: 'Falha no delete por falta de token', status: false })
+        }
+    },
+    async resetPassword(req, res) {
+        const pts = crypto.randomBytes(5).toString('hex');
+        const newpassword = process.env.NODEBCRYPT + pts;
+        const hashpassword = await bcryptjs.hash(newpassword, 10);
+        const userResponse = await User.findOneAndUpdate(req.body.email, { password: hashpassword });
+        if (userResponse != null) {
+            await recovery.resetPassword(req.body.email, userResponse.name, pts);
+            return res.status(200).send({ data: userResponse, message: 'Atualizado  com sucesso', status: true })
+        } else {
+            return res.status(400).send({ error: 'Falha na atualização por falta de token', status: false })
         }
     }
 }
