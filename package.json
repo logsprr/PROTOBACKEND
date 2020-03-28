@@ -1,4 +1,12 @@
 {
+  "name": "protonative",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "prod": "node src/index.js"
+  },
   "dependencies": {
     "@google-cloud/storage": "^4.3.1",
     "axios": "^0.19.0",
