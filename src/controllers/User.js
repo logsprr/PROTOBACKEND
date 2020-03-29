@@ -11,7 +11,7 @@ module.exports = {
             const userResponse = await User.create(req.body);
             if (userResponse != null) {
                 userResponse.password = undefined;
-                await firebase.database().ref('users/' + userResponse._id).set({ name: userResponse.name, avatar: userResponse.photoUrl, email: userResponse.email });
+                await firebase.database().ref('enterprises/' + req.body.idEnterprise + '/users/' + userResponse._id).set({ name: userResponse.name, avatar: userResponse.photoUrl, email: userResponse.email });
                 return res.status(200).send({ data: userResponse, message: 'Registrado com sucesso', status: true, token: await jwt.generateToken(userResponse._id) })
             } else {
                 return res.status(401).send({ error: 'Falha no registro dos dados', status: false })
