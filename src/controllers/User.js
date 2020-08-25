@@ -22,7 +22,6 @@ module.exports = {
     },
     async authenticateUser(req, res) {
         const { email, password } = req.body;
-        console.log(req);
         console.log(email,password);
         if (req.body != null) {
             const userResponse = await User.findOne({ email }).select('+password');
